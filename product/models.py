@@ -1,0 +1,94 @@
+from django                     import db
+from django.db                  import models
+from django.db.models.deletion  import CASCADE
+
+FORBIDDEN = 0
+
+class Menu(models.Model):
+    name = models.CharField(max_length=45)
+
+    class Meta:
+        db_table = 'menus'
+
+class Category(models.Model):
+    menu_id = models.ForeignKey('Menu', on_delete=models.SET_DEFAULT, default=FORBIDDEN)
+    name    = models.CharField(max_length=45)
+ 
+    class Meta:
+        db_table = 'categories'
+
+class Subcategory(models.Model):
+    category_id = models.ForeignKey('Category', on_delete=models.SET_DEFAULT, default=FORBIDDEN)
+    name        = models.CharField(max_length=45)
+
+    class Meta:
+        db_table = 'subcategories'
+
+class Brand(models.Model):
+    name                = models.CharField(max_length=45)
+    delivery_fee_cap    = models.DecimalField(max_digits=15, decimal_places=3)
+
+    class Meta:
+        db_table = 'brands'
+
+class Product(models.Model):
+    subcategory_id  = models.ForeignKey('Subcategory', on_delete=models.SET_DEFAULT, default=FORBIDDEN)
+    brand_id        = models.ForeignKey('Brand', on_delete=models.SET_NULL, null=True)
+    name            = models.CharField(max_length=100)
+    price           = models.DecimalField(max_digits=15, decimal_places=3)
+    discount_rate   = models.DecimalField(max_digits=2, decimal_places=2, default=0)
+    is_for_sale     = models.BooleanField(default=1)
+
+    class Meta:
+        db_table = 'products'
+
+class ProductImageUrl(models.Model):
+    product_id  = models.ForeignKey('Product', on_delete=models.CASCADE)
+    image_url   = models.URLField()
+    is_main     = models.BooleanField(default=0)
+
+    class Meta:
+        db_table = 'product_image_urls'
+
+class Color(models.Model):
+    name        = models.CharField(max_length=45)
+    is_for_sale = models.BooleanField(default=1)
+
+    class Meta:
+        db_table = 'colors'
+
+class Size(models.Model):
+    name        = models.CharField(max_length=45)
+    is_for_sale = models.BooleanField(default=1)
+
+    class Meta:
+        db_table = 'sizes'
+
+class ColorSize(models.Model):
+    product_id          = models.ForeignKey('Product', on_delete=models.PROTECT)
+    color_id            = models.ForeignKey('Color', on_delete=models.PROTECT)
+    size_id             = models.ForeignKey('Size', on_delete=models.PROTECT)
+    additional_price    = models.DecimalField(max_digits=15, decimal_places=3, default=0)
+
+    class Meta:
+        db_table = 'colors_sizes'
+
+class ProductQuestion(models.Model):
+    user_id     = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    product_id  = models.ForeignKey('Product', on_delete=models.CASCADE)
+    content     = models.CharField(max_length=100)
+    created_at  = models.DateField(auto_now_add=True)
+    updated_at  = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'product_questions'
+
+class ProductAnswer(models.Model):
+    user_id             = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    product_question_id = models.ForeignKey('ProductQuestion', on_delete=models.CASCADE)
+    content             = models.CharField(max_length=100)
+    created_at          = models.DateField(auto_now_add=True)
+    updated_at          = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'product_answers'
