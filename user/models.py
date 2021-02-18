@@ -2,8 +2,8 @@ from django.db                  import models
 from django.db.models.deletion  import CASCADE
 
 class User(models.Model):
-    gender_id       = models.ForeignKey('Gender', on_delete=models.PROTECT, null=True)
-    admin_level_id  = models.ForeignKey('AdminLevel', on_delete=models.PROTECT)
+    gender          = models.ForeignKey('Gender', on_delete=models.PROTECT, null=True)
+    admin_level     = models.ForeignKey('AdminLevel', on_delete=models.PROTECT)
     user_name       = models.CharField(max_length=32)
     password        = models.CharField(max_length=45)
     nickname        = models.CharField(max_length=45)
@@ -22,7 +22,7 @@ class Gender(models.Model):
         db_table = 'genders'
 
 class AdminLevel(models.Model):
-    brand_id    = models.ForeignKey('product.Brand', on_delete=models.CASCADE, null=True)
+    brand       = models.ForeignKey('product.Brand', on_delete=models.CASCADE, null=True)
     name        = models.CharField(max_length=45)
 
     class Meta:
