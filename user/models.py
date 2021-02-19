@@ -1,5 +1,4 @@
 from django.db                  import models
-from django.db.models.deletion  import CASCADE
 
 class User(models.Model):
     gender          = models.ForeignKey('Gender', on_delete=models.PROTECT, null=True)

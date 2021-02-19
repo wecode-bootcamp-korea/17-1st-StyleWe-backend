@@ -1,6 +1,4 @@
-from django                     import db
 from django.db                  import models
-from django.db.models.deletion  import CASCADE
 
 class Menu(models.Model):
     name = models.CharField(max_length=45)
