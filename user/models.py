@@ -22,7 +22,6 @@ class Gender(models.Model):
         db_table = 'genders'
 
 class AdminLevel(models.Model):
-    brand       = models.ForeignKey('product.Brand', on_delete=models.CASCADE, null=True)
     name        = models.CharField(max_length=45)
 
     class Meta:

@@ -2,8 +2,6 @@ from django                     import db
 from django.db                  import models
 from django.db.models.deletion  import CASCADE
 
-FORBIDDEN = 1
-
 class Menu(models.Model):
     name = models.CharField(max_length=45)
 
@@ -11,14 +9,14 @@ class Menu(models.Model):
         db_table = 'menus'
 
 class Category(models.Model):
-    menu    = models.ForeignKey('Menu', on_delete=models.SET_DEFAULT, default=FORBIDDEN)
+    menu    = models.ForeignKey('Menu', on_delete=models.SET_NULL, null=True)
     name    = models.CharField(max_length=45)
  
     class Meta:
         db_table = 'categories'
 
 class Subcategory(models.Model):
-    category    = models.ForeignKey('Category', on_delete=models.SET_DEFAULT, default=FORBIDDEN)
+    category    = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True)
     name        = models.CharField(max_length=45)
 
     class Meta:
@@ -32,7 +30,7 @@ class Brand(models.Model):
         db_table = 'brands'
 
 class Product(models.Model):
-    subcategory     = models.ForeignKey('Subcategory', on_delete=models.SET_DEFAULT, default=FORBIDDEN)
+    subcategory     = models.ForeignKey('Subcategory', on_delete=models.SET_NULL, null=True)
     brand           = models.ForeignKey('Brand', on_delete=models.SET_NULL, null=True)
     name            = models.CharField(max_length=100)
     price           = models.DecimalField(max_digits=15, decimal_places=3)
