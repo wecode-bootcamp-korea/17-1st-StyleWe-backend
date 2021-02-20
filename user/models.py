@@ -2,7 +2,7 @@ from django.db                  import models
 
 class User(models.Model):
     gender          = models.ForeignKey('Gender', on_delete=models.PROTECT, null=True)
-    admin_level     = models.ForeignKey('AdminLevel', on_delete=models.PROTECT)
+    admin_level     = models.ForeignKey('AdminLevel', on_delete=models.PROTECT, default=1)
     user_name       = models.CharField(max_length=32)
     password        = models.CharField(max_length=45)
     nickname        = models.CharField(max_length=45)
@@ -15,13 +15,13 @@ class User(models.Model):
         db_table = 'users'
 
 class Gender(models.Model):
-    name    = models.CharField(max_length=45)
+    name = models.CharField(max_length=45)
 
     class Meta:
         db_table = 'genders'
 
 class AdminLevel(models.Model):
-    name        = models.CharField(max_length=45)
+    name = models.CharField(max_length=45)
 
     class Meta:
         db_table = 'admin_levels'
