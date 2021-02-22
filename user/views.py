@@ -43,7 +43,7 @@ class SignUpInitializeView(View):
             )
 
             user    = User.objects.get(user_name=user_name)
-            token   = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=AL)
+            token   = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=ALGORITHM)
 
             return JsonResponse({'message':'SUCESS','token':token}, status=200)
         
