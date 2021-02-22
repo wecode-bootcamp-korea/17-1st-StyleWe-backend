@@ -28,11 +28,11 @@ class SignUpInitializeView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'message':'EMAIL_ALREADY_EXISTS'}, status=409)
 
-            if len(user_name)<USER_NAME_MIN_LENGTH:
+            if len(user_name) < USER_NAME_MIN_LENGTH:
                 return JsonResponse({'message':'SHORT_ID'}, status=400)
-            if len(user_name)>USER_NAME_MAX_LENGTH:
+            if len(user_name) > USER_NAME_MAX_LENGTH:
                 return JsonResponse({'message':'LONG_ID'}, status=409)
-            if len(password)<PASSWORD_MIN_LENGTH:
+            if len(password) < PASSWORD_MIN_LENGTH:
                 return JsonResponse({'message':'SHORT_PASSWORD'}, status=409)
             
             User.objects.create(
@@ -40,7 +40,7 @@ class SignUpInitializeView(View):
                 password    = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode(),
                 nickname    = nickname,
                 email       = email
-                )
+            )
 
             user    = User.objects.get(user_name=user_name)
             token   = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=AL)
