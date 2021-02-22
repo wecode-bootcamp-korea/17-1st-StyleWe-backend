@@ -9,6 +9,7 @@ def login_decorator(func):
     def wrapper(self, request, *args, **kwargs):
         try:
             access_token    = request.headers.get('Authorization', None)
+            print(access_token)
             payload         = jwt.decode(access_token, SECRET_KEY, algorithms=ALGORITHM)
             user            = User.objects.get(id=payload['user_id'])
             request.user    = user
