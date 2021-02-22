@@ -12,13 +12,17 @@ class SignUpFinalizeView(View):
     @login_decorator
     def post(self, request):
         try:
-            data    = json.loads(request.body or 'null')
+            data = json.loads(request.body or 'null')
+            
+            if data is None:
+                return JsonResponse({'message':'SKIP'}, status=200)
+
             birth   = data.get('birth', None)
             country = data.get('country', None)
             website = data.get('website', None)
             about   = data.get('about', None)
 
-            user_id         = request.user.user_id
+            user_id         = request.user.id
             user            = User.objects.get(id=user_id)
             user.birth      = birth
             user.country    = country
