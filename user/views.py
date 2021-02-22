@@ -5,7 +5,7 @@ from django.views           import View
 from django.http            import JsonResponse, HttpResponse
 
 from user.models            import User
-from my_settings            import SECRET_KEY, AL
+from my_settings            import SECRET_KEY, ALGORITHM
 
 class SignInView(View):
     def post(self, request):
@@ -22,7 +22,7 @@ class SignInView(View):
             password_validation = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
 
             if password_validation:
-                acces_token = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=AL)
+                acces_token = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=ALGORITHM)
 
                 return JsonResponse({'message':'SUCESS', "token":acces_token}, status=200)
             return JsonResponse({'message':'SIGNIN_FAIL'}, status=401)
