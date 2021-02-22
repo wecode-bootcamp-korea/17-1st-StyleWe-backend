@@ -47,13 +47,21 @@ class ProductImageUrl(models.Model):
         db_table = 'product_image_urls'
 
 class Color(models.Model):
+<<<<<<< HEAD
     name        = models.CharField(max_length=45)
+=======
+    name = models.CharField(max_length=45)
+>>>>>>> main
 
     class Meta:
         db_table = 'colors'
 
 class Size(models.Model):
+<<<<<<< HEAD
     name        = models.CharField(max_length=45)
+=======
+    name = models.CharField(max_length=45)
+>>>>>>> main
 
     class Meta:
         db_table = 'sizes'
@@ -63,7 +71,7 @@ class ColorSize(models.Model):
     color               = models.ForeignKey('Color', on_delete=models.PROTECT)
     size                = models.ForeignKey('Size', on_delete=models.PROTECT)
     additional_price    = models.DecimalField(max_digits=15, decimal_places=3, default=0)
-    is_for_sale = models.BooleanField(default=1)
+    is_for_sale         = models.BooleanField(default=1)
 
     class Meta:
         db_table = 'colors_sizes'

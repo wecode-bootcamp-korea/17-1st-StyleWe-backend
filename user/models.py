@@ -15,13 +15,13 @@ class User(models.Model):
         db_table = 'users'
 
 class Gender(models.Model):
-    name    = models.CharField(max_length=45)
+    name = models.CharField(max_length=45)
 
     class Meta:
         db_table = 'genders'
 
 class AdminLevel(models.Model):
-    name        = models.CharField(max_length=45)
+    name = models.CharField(max_length=45)
 
     class Meta:
         db_table = 'admin_levels'
