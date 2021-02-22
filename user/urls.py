@@ -1,6 +1,6 @@
 from django.urls    import path,include
 from user.views     import SignUpFinalizeView
 
-urlpatters = [
+urlpatterns = [
     path('signup/final', SignUpFinalizeView.as_view()),
 ]
