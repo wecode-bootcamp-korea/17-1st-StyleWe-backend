@@ -4,8 +4,8 @@ from django.shortcuts       import render
 from django.views           import View
 from django.http            import JsonResponse, HttpResponse
 
-from user.models        import User
-from my_settings        import SECRET_KEY, AL
+from user.models            import User
+from my_settings            import SECRET_KEY, AL
 
 class SignInView(View):
     def post(self, request):
@@ -15,10 +15,9 @@ class SignInView(View):
             user_name   = data['user_name']
             password    = data['password']
             
-            try:
-                user = User.objects.get(user_name=user_name)
-            except user.DoesNotExist:
-                return JsonResponse({'message':'INVALID_USER'}, status=401)
+            user = User.objects.get(user_name=user_name)
+        except User.DoesNotExist:
+            return JsonResponse({'message':'INVALID_USER'}, status=401)
 
             password_validation = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
 
