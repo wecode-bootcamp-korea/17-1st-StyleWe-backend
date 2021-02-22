@@ -15,9 +15,10 @@ class SignInView(View):
             user_name   = data['user_name']
             password    = data['password']
             
+            if not User.objects.filter(user_name=user_name).exists():
+                return JsonResponse({'message':'INVALID_USER'}, status=401)
+            
             user = User.objects.get(user_name=user_name)
-        except User.DoesNotExist:
-            return JsonResponse({'message':'INVALID_USER'}, status=401)
 
             password_validation = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
 
