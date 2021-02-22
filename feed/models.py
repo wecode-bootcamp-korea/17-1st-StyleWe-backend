@@ -6,7 +6,7 @@ class Feed(models.Model):
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
     description     = models.CharField(max_length=2000)
-    like_number     = models.IntegerField()
+    like_number     = models.IntegerField(default=0)
     tag_item_number = models.IntegerField(null=True)
 
     class Meta:
