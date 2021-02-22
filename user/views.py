@@ -20,7 +20,7 @@ class SignInView(View):
             except user.DoesNotExist:
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
-            password_validation = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('ut-8'))
+            password_validation = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
 
             if password_validation:
                 acces_token = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=AL)
