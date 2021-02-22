@@ -1,32 +1,31 @@
 import json, bcrypt, jwt
 
-from django.shortcuts       import render
-from django.views           import View
-from django.http            import JsonResponse, HttpResponse
+from django.shortcuts   import render
+from django.views       import View
+from django.http        import JsonResponse, HttpResponse
 
 from user.models        import User
-from my_settings        import SECRET_KEY, AL
+from my_settings        import SECRET_KEY
+from user.utils         import login_decorator
 
-class SignInView(View):
+class SignUpFinalizeView(View):
+    @login_decorator
     def post(self, request):
-        data = json.loads(request.body)
-        
         try:
-            user_name   = data['user_name']
-            password    = data['password']
-            
-            try:
-                user = User.objects.get(user_name=user_name)
-            except user.DoesNotExist:
-                return JsonResponse({'message':'INVALID_USER'}, status=401)
+            data    = json.loads(request.body or 'null')
+            birth   = data.get('birth', None)
+            country = data.get('country', None)
+            website = data.get('website', None)
+            about   = data.get('about', None)
 
-            password_validation = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
+            user_id         = request.user.user_id
+            user            = User.objects.get(id=user_id)
+            user.birth      = birth
+            user.country    = country
+            user.website    = website
+            user.about      = about
+            user.save()
 
-            if password_validation:
-                acces_token = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=AL)
-
-                return JsonResponse({'message':'SUCESS', "token":acces_token}, status=200)
-            return JsonResponse({'message':'SIGNIN_FAIL'}, status=401)
-        
+            return JsonResponse({'message':'SUCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
