@@ -5,7 +5,7 @@ from django.views       import View
 from django.http        import JsonResponse, HttpResponse
 
 from user.models        import User
-from my_settings        import SECRET_KEY,AL
+from my_settings        import SECRET_KEY,ALGORITHM
 from user.utils         import login_decorator
 
 
