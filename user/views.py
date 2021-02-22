@@ -1,11 +1,12 @@
 import json, bcrypt, jwt
 
-from django.shortcuts   import render
-from django.views       import View
-from django.http        import JsonResponse, HttpResponse
+from django.shortcuts       import render
+from django.views           import View
+from django.http            import JsonResponse, HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 from user.models        import User
-from my_settings        import SECRET_KEY
+from my_settings        import SECRET_KEY, AL
 
 class SignInView(View):
     def post(self, request):
@@ -14,18 +15,19 @@ class SignInView(View):
         try:
             user_name   = data['user_name']
             password    = data['password']
-
-            user = User.objects.get(user_name=user_name)
             
+            try:
+                user = User.objects.get(user_name=user_name)
+            except ObjectDoesNotExist:
+                return JsonResponse({'message':'INVALID_USER'}, status=401)
+
             password_validation = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
 
             if password_validation:
-                token = jwt.encode({'user_name':user.name}, SECRET_KEY, algorithm='HS256')
-                token = token.decode('utf-8')
+                acces_token = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=AL)
 
-                return JsonResponse({'token':token}, status=200)
-        
+                return JsonResponse({'message':'SUCESS', "token":acces_token}, status=200)
             return JsonResponse({'message':'SIGNIN_FAIL'}, status=401)
-
+        
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
