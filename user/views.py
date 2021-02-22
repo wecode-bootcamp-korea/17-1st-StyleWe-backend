@@ -24,7 +24,7 @@ class SignUpFinalizeView(View):
             user.country    = country
             user.website    = website
             user.about      = about
-            user.save
+            user.save()
 
             return JsonResponse({'message':'SUCESS'}, status=200)
         except KeyError:
