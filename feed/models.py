@@ -6,7 +6,7 @@ class Feed(models.Model):
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
     description     = models.CharField(max_length=2000)
-    like_number     = models.IntegerField()
+    like_number     = models.IntegerField(default=0)
     tag_item_number = models.IntegerField(null=True)
 
     class Meta:
@@ -23,7 +23,7 @@ class Comment(models.Model):
         db_table = 'comments'
 
 class ImageUrl(models.Model):
-    feed        = models.ForeignKey(Feed, on_delete=models.CASCADE)
+    feed        = models.ForeignKey('Feed', on_delete=models.CASCADE)
     image_url   = models.URLField()
 
     class Meta:
