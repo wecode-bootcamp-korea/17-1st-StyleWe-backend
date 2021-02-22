@@ -3,7 +3,6 @@ import json, bcrypt, jwt
 from django.shortcuts       import render
 from django.views           import View
 from django.http            import JsonResponse, HttpResponse
-from django.core.exceptions import ObjectDoesNotExist
 
 from user.models        import User
 from my_settings        import SECRET_KEY, AL
@@ -18,7 +17,7 @@ class SignInView(View):
             
             try:
                 user = User.objects.get(user_name=user_name)
-            except ObjectDoesNotExist:
+            except user.DoesNotExist:
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
             password_validation = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
