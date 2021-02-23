@@ -13,7 +13,7 @@ PASSWORD_MIN_LENGTH     = 6
 USER_NAME_MIN_LENGTH    = 3
 USER_NAME_MAX_LENGTH    = 32
 
-class UserCreateView(View):
+class UserView(View):
     def post(self, request):
         data = json.loads(request.body)
         
@@ -48,3 +48,29 @@ class UserCreateView(View):
         
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
+    
+    @login_decorator
+    def update(self, request):
+        try:
+            data = json.loads(request.body or 'null')
+            
+            if data is None:
+                return JsonResponse({'message':'SKIP'}, status=200)
+
+            birth   = data.get('birth', None)
+            country = data.get('country', None)
+            website = data.get('website', None)
+            about   = data.get('about', None)
+
+            user_id         = request.user.id
+            user            = User.objects.get(id=user_id)
+            user.birth      = birth
+            user.country    = country
+            user.website    = website
+            user.about      = about
+            user.save()
+    
+            return JsonResponse({'message':'SUCESS'}, status=200)
+        except KeyError:
+            return JsonResponse({'message':'INVALID_KEYS'}, status=400)
+            
