@@ -44,13 +44,13 @@ class UserView(View):
 
             token   = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=ALGORITHM)
 
-            return JsonResponse({'message':'SUCESS','token':token}, status=200)
+            return JsonResponse({'message':'SUCCESS','token':token}, status=200)
         
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
     
     @login_decorator
-    def put(self, request):
+    def patch(self, request):
         try:
             data = json.loads(request.body or 'null')
             
@@ -70,7 +70,7 @@ class UserView(View):
             user.about      = about
             user.save()
     
-            return JsonResponse({'message':'SUCESS'}, status=200)
+            return JsonResponse({'message':'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
             
