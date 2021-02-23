@@ -29,7 +29,7 @@ class UserView(View):
                 return JsonResponse({'message':'EMAIL_ALREADY_EXISTS'}, status=409)
 
             if len(user_name) < USER_NAME_MIN_LENGTH:
-                return JsonResponse({'message':'SHORT_ID'}, status=400)
+                return JsonResponse({'message':'SHORT_ID'}, status=409)
             if len(user_name) > USER_NAME_MAX_LENGTH:
                 return JsonResponse({'message':'LONG_ID'}, status=409)
             if len(password) < PASSWORD_MIN_LENGTH:
@@ -52,10 +52,10 @@ class UserView(View):
     @login_decorator
     def patch(self, request):
         try:
-            data = json.loads(request.body or 'null')
-            
-            if data is None:
-                return JsonResponse({'message':'SKIP'}, status=200)
+            if not request.body:
+                return JsonResponse({'message':'SUCCESS'}, status=200)
+
+            data = json.loads(request.body)
             
             user    = User.objects.get(id=request.user.id)
             birth   = data.get('birth', user.birth)
