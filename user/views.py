@@ -71,4 +71,3 @@ class UserView(View):
             return JsonResponse({'message':'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
-            
