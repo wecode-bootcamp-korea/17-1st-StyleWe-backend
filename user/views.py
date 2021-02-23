@@ -42,21 +42,22 @@ class UserView(View):
                     email       = email
                 )
 
-            token   = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=ALGORITHM)
+            access_token   = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=ALGORITHM)
 
-            return JsonResponse({'message':'SUCCESS','token':token}, status=200)
+            return JsonResponse({'message':'SUCCESS','access_token':access_token}, status=200)
         
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
     
     @login_decorator
     def patch(self, request):
+        print(request)
         try:
             if not request.body:
                 return JsonResponse({'message':'SUCCESS'}, status=200)
 
             data = json.loads(request.body)
-            
+
             user    = User.objects.get(id=request.user.id)
             birth   = data.get('birth', user.birth)
             website = data.get('website', user.website)
