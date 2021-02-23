@@ -50,7 +50,7 @@ class UserView(View):
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
     
     @login_decorator
-    def update(self, request):
+    def put(self, request):
         try:
             data = json.loads(request.body or 'null')
             
