@@ -23,7 +23,7 @@ class Comment(models.Model):
         db_table = 'comments'
 
 class ImageUrl(models.Model):
-    feed        = models.ForeignKey(Feed, on_delete=models.CASCADE)
+    feed        = models.ForeignKey('Feed', on_delete=models.CASCADE)
     image_url   = models.URLField()
 
     class Meta:
