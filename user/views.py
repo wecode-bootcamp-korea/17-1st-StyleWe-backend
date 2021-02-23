@@ -56,16 +56,13 @@ class UserView(View):
             
             if data is None:
                 return JsonResponse({'message':'SKIP'}, status=200)
+            
+            user    = User.objects.get(id=request.user.id)
+            birth   = data.get('birth', user.birth)
+            website = data.get('website', user.website)
+            about   = data.get('about', user.about)
 
-            birth   = data.get('birth', None)
-            country = data.get('country', None)
-            website = data.get('website', None)
-            about   = data.get('about', None)
-
-            user_id         = request.user.id
-            user            = User.objects.get(id=user_id)
             user.birth      = birth
-            user.country    = country
             user.website    = website
             user.about      = about
             user.save()
