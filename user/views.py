@@ -8,7 +8,7 @@ from user.models        import User
 from my_settings        import SECRET_KEY
 from user.utils         import login_decorator
 
-class SignUpFinalizeView(View):
+class UserUpdateView(View):
     @login_decorator
     def post(self, request):
         try:
