@@ -13,7 +13,7 @@ PASSWORD_MIN_LENGTH     = 6
 USER_NAME_MIN_LENGTH    = 3
 USER_NAME_MAX_LENGTH    = 32
 
-class SignUpInitializeView(View):
+class UserCreateView(View):
     def post(self, request):
         data = json.loads(request.body)
         
@@ -35,14 +35,13 @@ class SignUpInitializeView(View):
             if len(password) < PASSWORD_MIN_LENGTH:
                 return JsonResponse({'message':'SHORT_PASSWORD'}, status=409)
             
-            User.objects.create(
-                user_name   = user_name,
-                password    = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode(),
-                nickname    = nickname,
-                email       = email
-            )
+            user = User.objects.create(
+                    user_name   = user_name,
+                    password    = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode(),
+                    nickname    = nickname,
+                    email       = email
+                )
 
-            user    = User.objects.get(user_name=user_name)
             token   = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=ALGORITHM)
 
             return JsonResponse({'message':'SUCESS','token':token}, status=200)
