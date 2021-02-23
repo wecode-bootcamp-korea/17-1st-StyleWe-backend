@@ -1,0 +1,13 @@
+subcategory_id,brand_id,name,price,discount_rate,is_for_sale
+1,1,Cike runners,96000,0.2,
+1,2,Naddidas special edition,121000,0.05,
+1,2,solid color running shoes,100500,0.35,
+1,2,Naddidas runners’ steady,85000,0.3,
+2,1,Cike flat,105000,0.3,
+2,2,flat sneakers with 3 lines,120000,0.25,
+2,2,sneakers good to run,135000,0.2,
+2,3,Onverse original sneakers,149000,0.1,
+3,1,Cike custom high top,140000,0,
+3,1,Cike cool high top,99000,0.05,
+3,3,Onverse high top,110000,0.15,
+3,3,Onverse new edition,145000,0.1,
