@@ -58,7 +58,7 @@ class UserView(View):
 
             data = json.loads(request.body)
 
-            user    = User.objects.get(id=request.user.id)
+            user    = request.user
             birth   = data.get('birth', user.birth)
             website = data.get('website', user.website)
             about   = data.get('about', user.about)
