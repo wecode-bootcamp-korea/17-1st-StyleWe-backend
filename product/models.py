@@ -46,7 +46,7 @@ class ProductImageUrl(models.Model):
     class Meta:
         db_table = 'product_image_urls'
 
-class ColorSize(models.Model):
+class ProductOption(models.Model):
     product             = models.ForeignKey('Product', on_delete=models.PROTECT)
     color               = models.CharField(max_length=50)
     size                = models.CharField(max_length=50)
@@ -54,7 +54,7 @@ class ColorSize(models.Model):
     is_for_sale         = models.BooleanField(default=1)
 
     class Meta:
-        db_table = 'colors_sizes'
+        db_table = 'product_options'
 
 class ProductQuestion(models.Model):
     user        = models.ForeignKey('user.User', on_delete=models.CASCADE)
