@@ -9,16 +9,8 @@ from feed.models        import Feed, ImageUrl, Comment
 from product.models     import Product, ProductImageUrl
 
 class FeedDetailView(View):
-    # feed C (post)
-            # product_id : 커뮤니티 메인 화면에서 피드 작성시 화면에 없음. 연결할 상품을 shell에서 지정해주기.후기는 자기가 구매한 제품에서 쓸 수 있어서..(자기 구매내역이라든가.. 상품 상세페이지에서는 아니고.)
-            # 사용자가 누군지는 로그인 판별 데코레이터에서 받아오기.. 여기서는 request.user로 user_id를 알 수 있음.
-            # created_at, updated_at은 자동으로 들어감
-            # description은 반드시 값 받아야 됨
-            # like_number은 피드 생성시에는 값을 받을 수 없음. default=0으로 해줘야 됨.
-            # tag_item_number은 일단 값을 받지 않고 null로 두기.. 추후 shell에서 넣어주기
-
     # 데코레이터로 로그인 판단 하지 않기. 미가입자여도 feed R할 수 있어야 됨.
-    def get(self, request, feed_id):    # feed R
+    def get(self, request, feed_id):
         try:
             feed_data = Feed.objects.get(id=feed_id)
 

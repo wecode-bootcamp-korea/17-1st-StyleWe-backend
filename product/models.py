@@ -47,21 +47,13 @@ class ProductImageUrl(models.Model):
         db_table = 'product_image_urls'
 
 class Color(models.Model):
-<<<<<<< HEAD
-    name        = models.CharField(max_length=45)
-=======
     name = models.CharField(max_length=45)
->>>>>>> main
 
     class Meta:
         db_table = 'colors'
 
 class Size(models.Model):
-<<<<<<< HEAD
-    name        = models.CharField(max_length=45)
-=======
     name = models.CharField(max_length=45)
->>>>>>> main
 
     class Meta:
         db_table = 'sizes'
