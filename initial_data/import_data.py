@@ -6,12 +6,12 @@ sys.path.append(BASE_DIR)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
-CSV_PATH    = 'initial_data/'
-LOREM       = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at rhoncus leo, ut tincidunt elit. Mauris vitae magna libero. Aenean iaculis lectus sed felis semper elementum. Etiam semper venenatis ante euismod convallis. Aenean malesuada blandit accumsan. Duis suscipit sapien quis nulla rhoncus, in tincidunt tortor pharetra.'
-
 from user.models    import User, AdminLevel, Gender
 from product.models import Menu, Category, ProductImageUrl, ProductQuestion, ProductAnswer, Subcategory, Brand, Product, Color, Size, ColorSize
 from feed.models    import Feed, Comment, ImageUrl
+
+CSV_PATH    = 'initial_data/'
+LOREM       = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at rhoncus leo, ut tincidunt elit. Mauris vitae magna libero. Aenean iaculis lectus sed felis semper elementum. Etiam semper venenatis ante euismod convallis. Aenean malesuada blandit accumsan. Duis suscipit sapien quis nulla rhoncus, in tincidunt tortor pharetra.'
 
 def insert_user():
     with open(CSV_PATH + 'admin_levels.csv', 'r') as csvfile:
@@ -67,7 +67,7 @@ def insert_product():
 
     with open(CSV_PATH + 'product_answers.csv', 'r') as csvfile:
         for row in csv.DictReader(csvfile):
-            ProductAnswer.objects.create(user_id=row['user_id'], product_question_id=row['productquestion__id'], content=row['content'])
+            ProductAnswer.objects.create(user_id=row['user_id'], product_question_id=row['product_question_id'], content=row['content'])
 
 def insert_option():
     with open(CSV_PATH + 'colors.csv', 'r') as csvfile:
@@ -78,31 +78,41 @@ def insert_option():
         for row in csv.DictReader(csvfile):
             Size.objects.create(name=row['name'])
 
-# def insert_combination():
+def insert_combination():
+    color_id_lst = [item.id for item in list(Color.objects.all())]
+    size_id_lst = [item.id for item in list(Size.objects.all())]
+    product_id_lst = [item.id for item in list(Product.objects.all())]
 
+    for product_id in product_id_lst:
+        for color in color_id_lst:
+            for size in size_id_lst: 
+                ColorSize.objects.create(product_id=product_id, color_id=color, size_id=size)
 
 def insert_feed():
+    for i in range(3):
+        with open(CSV_PATH + 'feeds.csv', 'r') as csvfile:
+            for row in csv.DictReader(csvfile):
+                Feed.objects.create(product_id=row['product_id'], user_id=row['user_id'], description=LOREM[random.randint(0, 200):random.randint(201, 320)], like_number=random.randint(0, 200))
+    
+                if row['tag_item_number']:
+                    temp = Feed.objects.latest('id')
+                    temp.tag_item_number = row['tag_item_number']
+                    temp.save()
+        
+        with open(CSV_PATH + 'feeds.csv', 'r') as csvfile:
+            csv_dict_length = len(list(csv.reader(csvfile)))-1
+
+        with open(CSV_PATH + 'image_urls.csv', 'r') as csvfile:
+            for row in csv.DictReader(csvfile):
+                ImageUrl.objects.create(feed_id=(csv_dict_length * i) + int(row['feed_id']), image_url=row['image_url'])
+
     with open(CSV_PATH + 'feeds.csv', 'r') as csvfile:
-        for row in csv.DictReader(csvfile):
-            Feed.objects.create(product_id=row['product'], user_id=['user_id'], description=LOREM[random.randint(0, 200):random.randint(201, 320)], like_number=random.randint(0, 200))
-
-            if row['tag_item_number']:
-                temp = Feed.objects.latest('id')
-                temp.tag_item_number = row['tag_item_number']
-                temp.save()
-
-    table_length = Feed.objects.all().count()
-    for i in range(table_length * 3):
-        Comment.objects.create(feed_id=random.randint(1, table_length), user_id=random.randint(1, 17), content=LOREM[random.randint(0,50):random.randint(51, 100)])
-
-    with open(CSV_PATH + 'image_url.csv', 'r') as csvfile:
-        csv_dict        = csv.DictReader(csvfile)
-        csv_dict_length = len(csv_dict)
-        for i in range(3):
-            for row in csv_dict:
-                ImageUrl.objects.create(feed_id=(i * csv_dict_length)+int(row['feed_id']), image_url=row['image_url'])
+        feeds_table_length = 3 * (len(list(csv.reader(csvfile)))-1)
+        for _ in range(feeds_table_length * 3):
+            Comment.objects.create(feed_id=random.randint(1, feeds_table_length), user_id=random.randint(1, 17), content=LOREM[random.randint(0,50):random.randint(51, 100)])
 
 insert_user()
 insert_product()
 insert_option()
+insert_combination()
 insert_feed()
