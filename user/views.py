@@ -8,6 +8,27 @@ from user.models        import User
 from my_settings        import SECRET_KEY,ALGORITHM
 from user.utils         import login_decorator
 
+class SignInView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        
+        try:
+            user_name   = data['user_name']
+            password    = data['password']
+            
+            if not User.objects.filter(user_name=user_name).exists():
+                return JsonResponse({'message':'INVALID_USER'}, status=401)
+            
+            user = User.objects.get(user_name=user_name)
+
+            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                access_token = jwt.encode({'user_id':user.id}, SECRET_KEY, algorithm=ALGORITHM)
+
+                return JsonResponse({'message':'SUCCESS', "access_token":access_token}, status=200)
+            return JsonResponse({'message':'SIGNIN_FAIL'}, status=401)
+        
+        except KeyError:
+            return JsonResponse({'message':'INVALID_KEYS'}, status=400)
 
 PASSWORD_MIN_LENGTH     = 6
 USER_NAME_MIN_LENGTH    = 3
