@@ -1,7 +1,9 @@
+import json
+
 from django.http.response   import JsonResponse
 from django.views           import View
 
-from .models                import Feed, Comment
+from .models                import Feed, Comment, ImageUrl
 from user.models            import User
 from product.models         import Product
 
@@ -9,8 +11,8 @@ class FeedEntireView(View):
     def get(self, request):
         MAXIMUM_COMMENT = 2
         feed_list   = []
-        # start_pos   = int(request.GET.get('offset'))
-        # div         = int(request.GET.get('limit'))
+        start_pos   = int(request.GET.get('offset'))
+        div         = int(request.GET.get('limit'))
     
         for feed in Feed.objects.all().order_by('-id'):
 
@@ -93,17 +95,6 @@ class FeedEntireView(View):
             }
 
             feed_list.append(feed_data)
-        # feed_list = feed_list[start_pos:start_pos+div]
+        feed_list = feed_list[start_pos:start_pos+div]
 
         return JsonResponse({'feed_list': feed_list}, status=200)
-
-    # # @login decorator
-    # def post(self, request):
-    #     data            = Json.loads(request.body)
-    #     image_url       = data['image_url']
-    #     description     = data['description']
-
-    #     Feed.objects.create(
-    #         # user_id= 
-    #         description= description
-    #     )
