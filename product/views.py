@@ -30,11 +30,10 @@ class ProductView(View):
 
         product_review['feed_total_number'] = len(product.feed_set.all())
         product_review['feed_basic']        = [{
-                    'main_image': ,
-                    'user_name':,
-                    'description':,
+                    #'main_image': ,
+                    #'user_name':,
+                    #'description':
                     'like_number': product.feed_set.like_number,
-                    'comment_number': product.feed_set.
-                    } for i in product.feed_set.filter(product_id=product_id)
-        
+                    #'comment_number': product.feed_set.
+                    } for i in product.feed_set.filter(product_id=product_id)]
         return JsonResponse({'result':result}, status=200)
