@@ -11,8 +11,8 @@ class FeedView(View):
     def get(self, request):
         MAXIMUM_COMMENT = 2
         feed_list   = []
-        # offset      = int(request.GET.get('offset'))
-        # limit       = int(request.GET.get('limit'))
+        offset      = int(request.GET.get('offset'))
+        limit       = int(request.GET.get('limit'))
     
         for feed in Feed.objects.all().order_by('-id'):
 
@@ -37,52 +37,32 @@ class FeedView(View):
                 product_image   = feed.product.productimageurl_set.get(is_main=1).image_url
 
                 product_data = {
-                    'product_name'      : product_name,
-                    'discount_rate'     : discount_rate,
-                    'price'             : price,
-                    'product_image'     : product_image
+                    'product_name'   : product_name,
+                    'discount_rate'  : discount_rate,
+                    'price'          : price,
+                    'product_image'  : product_image
                     }
             else:
                 product_data = {
-                    'product_name'      : '',
-                    'discount_rate'     : '',
-                    'price'             : '',
-                    'product_image'     : ''
+                    'product_name'   : '',
+                    'discount_rate'  : '',
+                    'price'          : '',
+                    'product_image'  : ''
                 }
             
             # 피드의 댓글
             if feed.comment_set.exists():
                 feed_comment_count      = feed.comment_set.all().count()                   
-                feed_comment_new        = list(feed.comment_set.values('content').order_by('-created_at'))
-                feed_comment_user_id    = list(feed.comment_set.values('user_id').order_by('-created_at'))
+                feed_comment_new        = list(feed.comment_set.all().order_by('-created_at'))[:MAXIMUM_COMMENT]
+                
+                comment_list = [
+                    {
+                        'user'      : User.objects.get(id = comment.user_id).nickname,
+                        'content'   : comment.content
+                    } 
+                    for comment in feed_comment_new
+                ]
 
-                # comment_list = []
-                # for i in range(MAXIMUM_COMMENT):
-                #     comment_user_id         = feed_comment_user_id[i]
-                #     comment_user_nickname   = User.objects.get(id = comment_user_id['user_id']).nickname
-                #     comment_new             = feed_comment_new[i]['content']
-                        
-                #     comment = {'user' : comment_user_nickname, 'content' : comment_new}
-                #     comment_list.append(comment)
-                if feed_comment_count >= MAXIMUM_COMMENT:        
-                    comment_list = []
-                    for i in range(MAXIMUM_COMMENT):
-                        comment_user_id         = feed_comment_user_id[i]
-                        comment_user_nickname   = User.objects.get(id = comment_user_id['user_id']).nickname
-                        comment_new             = feed_comment_new[i]['content']
-                        
-                        comment = {'user' : comment_user_nickname, 'content' : comment_new}
-                        comment_list.append(comment)
-                else:
-                    comment_list = []
-                    for i in range(MAXIMUM_COMMENT-1):
-                        comment_user_id         = feed_comment_user_id[i]
-                        comment_user_nickname   = User.objects.get(id = comment_user_id['user_id']).nickname
-                        comment_new             = feed_comment_new[i]['content']
-                        
-                        comment = {'user' : comment_user_nickname, 'content' : comment_new}
-                        comment_list.append(comment)
-                                
                 feed_comment_data = {
                     'feed_comment_count'    : feed_comment_count,
                     'comment_list'          : comment_list                    
@@ -103,6 +83,6 @@ class FeedView(View):
             }
 
             feed_list.append(feed_data)
-        # feed_list = feed_list[offset:offset+limit]
+        feed_list = feed_list[offset:offset+limit]
 
         return JsonResponse({'feed_list': feed_list}, status=200)
