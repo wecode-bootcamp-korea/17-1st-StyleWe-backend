@@ -34,7 +34,7 @@ class Product(models.Model):
     price           = models.DecimalField(max_digits=15, decimal_places=3)
     discount_rate   = models.DecimalField(max_digits=2, decimal_places=2, default=0)
     is_for_sale     = models.BooleanField(default=1)
-
+    
     class Meta:
         db_table = 'products'
 
@@ -46,22 +46,10 @@ class ProductImageUrl(models.Model):
     class Meta:
         db_table = 'product_image_urls'
 
-class Color(models.Model):
-    name = models.CharField(max_length=45)
-
-    class Meta:
-        db_table = 'colors'
-
-class Size(models.Model):
-    name = models.CharField(max_length=45)
-
-    class Meta:
-        db_table = 'sizes'
-
 class ColorSize(models.Model):
     product             = models.ForeignKey('Product', on_delete=models.PROTECT)
-    color               = models.ForeignKey('Color', on_delete=models.PROTECT)
-    size                = models.ForeignKey('Size', on_delete=models.PROTECT)
+    color               = models.CharField(max_length=50)
+    size                = models.CharField(max_length=50)
     additional_price    = models.DecimalField(max_digits=15, decimal_places=3, default=0)
     is_for_sale         = models.BooleanField(default=1)
 
