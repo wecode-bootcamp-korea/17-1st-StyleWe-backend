@@ -17,7 +17,6 @@ class ProductView(View):
         product_review          = {}    
         product_detail          = {}
         product_inquiry         = {}
-        product_exchange_return = {}
         product_category_hot    = {}
         product_brand_hot       = {}
 
@@ -39,7 +38,6 @@ class ProductView(View):
                                                 'like_number': feed.like_number,
                                                 'comment_number': len(feed.comment_set.all())
                                             } for feed in product.feed_set.filter(product_id=product_id)]
-        #10개만 보내기 가능?
 
         product_detail['detail_images']  = [product_image_url['image_url'] for product_image_url in product.productimageurl_set.values()]
         
@@ -58,8 +56,6 @@ class ProductView(View):
                                                     for question in product.productquestion_set.all()
                                                     for answer in question.productanswer_set.all()
                                                 ]
-
-        #product_exchange_return = [고정되어있는 상황은 백엔드가 보내주는게 좋은지? 프론트가 고정시키는지? 후자 선호할듯]
 
         product_category_hot['subcategory_name']    = product.subcategory.name
         product_category_hot['items']               = [
