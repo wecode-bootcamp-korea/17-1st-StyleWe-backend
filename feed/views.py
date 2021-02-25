@@ -73,13 +73,13 @@ class FeedDetailView(View):
             }, status=200)
         
         except ValueError:
-            return JsonResponse({'MESSAGE' : 'INVALID_TOKEN'}, status=400)
+            return JsonResponse({'MESSAGE' : 'INVALID_VALUE TYPE'}, status=400)
 
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
 
         except Feed.DoesNotExist:
-            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=400)
+            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=404)
 
     @login_decorator
     def patch(self, request, feed_id):
@@ -97,16 +97,16 @@ class FeedDetailView(View):
                 
                 return JsonResponse({'MESSAGE' : 'FEED_DESCRIPTION_UPDATED'}, status=200)
             
-            return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=400)
+            return JsonResponse({'MESSAGE' : 'USER_WITHOUT_AUTHORITY'}, status=400)
 
-        except JSONDecodeError:
-            return JsonResponse({'MESSAGE' : 'NO_FEED_DESCRIPTION'}, status=400)
+        except ValueError:
+            return JsonResponse({'MESSAGE' : 'INVALID_VALUE_TYPE'}, status=400)
 
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
 
         except Feed.DoesNotExist:
-            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=400)
+            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=404)
 
     @login_decorator
     def delete(self, request, feed_id):
@@ -118,13 +118,13 @@ class FeedDetailView(View):
                 
                 return JsonResponse({'MESSAGE' : 'FEED_DELETED'}, status=200)
             
-            return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=400)
+            return JsonResponse({'MESSAGE' : 'USER_WITHOUT_AUTHORITY'}, status=400)
         
+        except ValueError:
+            return JsonResponse({'MESSAGE' : 'INVALID_VALUE_TYPE'}, status=400)
+
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
 
         except Feed.DoesNotExist:
-            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=400)
-
-        except KeyError:
-            return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
+            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=404)
