@@ -1,7 +1,6 @@
 import json, jwt
 from json.decoder       import JSONDecodeError
 
-from django.shortcuts   import render
 from django.views       import View
 from django.http        import JsonResponse
 
@@ -97,8 +96,6 @@ class FeedDetailView(View):
                     }
                     comment_list.append(comment)
 
-            image_data = [{'url' : item.image_url} for item in feed_data.imageurl_set.all()]
-
             return JsonResponse({
                 'current_user_id'   : get_current_user_id(request),
                 'feed_basic_data'   : {
@@ -116,7 +113,7 @@ class FeedDetailView(View):
                     'feed_comment_count' : feed_data.comment_set.count(),
                     'comment_list'       : comment_list,
                 },
-                'feed_image_data'   : image_data,
+                'feed_image_data'   : [{'url' : item.image_url} for item in feed_data.imageurl_set.all()],
             }, status=200)
 
         except ValueError:
