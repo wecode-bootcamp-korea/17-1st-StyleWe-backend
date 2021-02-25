@@ -17,7 +17,7 @@ class ProductView(View):
         product_basic = {
             'brand_name'            : product.brand.name,
             'product_name'          : product.name,
-            'thumbnail_image'       : product.productimageurl_set.all().filter(is_main=1)[0].image_url,
+            'thumbnail_image'       : product.productimageurl_set.filter(is_main=1).first().image_url,
             'discount_rate'         : product.discount_rate,
             'original_price'        : product.price,
             'first_option_name'     : 'Color',
@@ -30,12 +30,12 @@ class ProductView(View):
             'feed_total_number' : product.feed_set.count(),
             'feed_basic'        : [{
                 'feed_id'           : feed.id,
-                'main_image'        : feed.imageurl_set.all()[0].image_url,
+                'main_image'        : feed.imageurl_set.filter().first().image_url,
                 'user_name'         : feed.user.user_name,
                 'description'       : feed.description,
                 'like_number'       : feed.like_number,
                 'comment_number'    : feed.comment_set.count()
-            }for feed in product.feed_set.filter(product_id=product_id)]
+            } for feed in product.feed_set.filter(product_id=product_id)]
         }
 
         product_detail = {
@@ -59,8 +59,8 @@ class ProductView(View):
         product_category_hot = {
             'subcategory_name': product.subcategory.name,
             'items': sorted([{
-                'product_id'        :category_hot_product.id,
-                'brand_name'        :category_hot_product.brand.name,
+                'product_id'        : category_hot_product.id,
+                'brand_name'        : category_hot_product.brand.name,
                 'name'              : category_hot_product.name,
                 'price'             : category_hot_product.price,
                 'discount_rate'     : category_hot_product.discount_rate,
@@ -72,8 +72,8 @@ class ProductView(View):
         product_brand_hot = {
             'brand_name': product.brand.name,
             'items': sorted([{
-                'product_id'        :brand_hot_product.id,
-                'brand_name'        :brand_hot_product.brand.name,
+                'product_id'        : brand_hot_product.id,
+                'brand_name'        : brand_hot_product.brand.name,
                 'name'              : brand_hot_product.name,
                 'price'             : brand_hot_product.price,
                 'discount_rate'     : brand_hot_product.discount_rate,
