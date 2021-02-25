@@ -1,4 +1,5 @@
 import json, jwt
+from json.decoder import JSONDecodeError
 
 from django.shortcuts   import render
 from django.views       import View
@@ -84,15 +85,22 @@ class FeedDetailView(View):
     def patch(self, request, feed_id):
         try:
             target_feed = Feed.objects.get(id=feed_id)
-            if target_feed.user_id == request.user.user_id:
+            
+            if target_feed.user_id == request.user.id:
                 new_description = json.loads(request.body)['description']
                 if not new_description:
                     return JsonResponse({'MESSAGE' : 'NO_FEED_DESCRIPTION'}, status=400)
-                current_description = Feed.objects.get(id=feed_id).description
-                current_description = new_description
-                current_description.save()
+
+                current_feed = Feed.objects.get(id=feed_id)
+                current_feed.description = new_description
+                current_feed.save()
+                
                 return JsonResponse({'MESSAGE' : 'FEED_DESCRIPTION_UPDATED'}, status=200)
+            
             return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=400)
+
+        except JSONDecodeError:
+            return JsonResponse({'MESSAGE' : 'NO_FEED_DESCRIPTION'}, status=400)
 
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
@@ -104,9 +112,12 @@ class FeedDetailView(View):
     def delete(self, request, feed_id):
         try:
             target_feed = Feed.objects.get(id=feed_id)
+            
             if target_feed.user_id == get_current_user_id(request):
                 Feed.objects.get(id=feed_id).delete()
+                
                 return JsonResponse({'MESSAGE' : 'FEED_DELETED'}, status=200)
+            
             return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=400)
         
         except KeyError:
