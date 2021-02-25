@@ -72,7 +72,7 @@ class FeedDetailView(View):
                 'feed_image_data'   : image_data,
             }, status=200)
         
-        except jwt.exceptions.DecodeError:
+        except ValueError:
             return JsonResponse({'MESSAGE' : 'INVALID_TOKEN'}, status=400)
 
         except KeyError:
@@ -125,3 +125,6 @@ class FeedDetailView(View):
 
         except Feed.DoesNotExist:
             return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=400)
+
+        except KeyError:
+            return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
