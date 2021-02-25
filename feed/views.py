@@ -9,42 +9,30 @@ from user.models        import User
 from feed.models        import Feed, ImageUrl, Comment
 from product.models     import Product, ProductImageUrl
 from user.utils         import login_decorator, get_current_user_id
-
+import random
 class FeedDetailView(View):
     def get(self, request, feed_id):
         try:
-            current_user_id = get_current_user_id(request)
-
-            feed_data       = Feed.objects.get(id=feed_id)
-            feed_writer     = User.objects.get(id=feed_data.user_id)
-            feed_basic_data = {
-                    'feed_id': feed_id,
-                    'feed_user': feed_writer.nickname,
-                    'feed_user_id': feed_writer.id,
-                    'feed_writer_about': feed_writer.about,
-                    'created_at': feed_data.created_at,
-                    'description': feed_data.description,
-                    'like_number': feed_data.like_number,
-                    'tag_item_number': feed_data.tag_item_number,
-            }
-
-            product_id      = feed_data.product_id
-            product_data    = False
-            if product_id:
-                product         = Product.objects.get(id=product_id)
-                product_data    = [{
-                    'id'            : product_id,
+            feed_data   = Feed.objects.get(id=feed_id)
+            feed_writer = User.objects.get(id=feed_data.user_id)
+            product_data = []
+            if feed_data.product_id:
+                product      = Product.objects.get(id=feed_data.product_id)
+                product_data = [{
+                    'id'            : product.id,
                     'product_name'  : product.name,
                     'price'         : product.price,
                     'discount_rate' : product.discount_rate,
-                    'product_image' : ProductImageUrl.objects.filter(product_id=product_id, is_main=1)[0].image_url
+                    'product_image' : ProductImageUrl.objects.filter(product_id=feed_data.product_id, is_main=1)[0].image_url
                 }]
+            else:
+                product_data = False
 
-            comments = feed_data.comment_set.all()
-            comment_list = False
-            if comments:
+            if feed_data.comment_set.exists():
+                comment_list = False
+            else:
                 comment_list = []
-                for item in list(comments):
+                for item in list(feed_data.comment_set.all()):
                     comment = {
                         'user'          : User.objects.get(id=item.user_id).nickname,
                         'user_id'       : item.user_id,
@@ -52,11 +40,6 @@ class FeedDetailView(View):
                         'created_at'    : item.created_at,
                     }
                     comment_list.append(comment)
-            
-            comment_data = {
-                'feed_comment_count'    : len(feed_data.comment_set.all()),
-                'comment_list'          : comment_list,
-            }
 
             image_data = []
             i = 0
@@ -65,13 +48,25 @@ class FeedDetailView(View):
                 i += 1
 
             return JsonResponse({
-                'current_user_id'   : current_user_id,
-                'feed_basic_data'   : feed_basic_data,
+                'current_user_id'   : get_current_user_id(request),
+                'feed_basic_data'   : {
+                    'feed_id'           : feed_id,
+                    'feed_user'         : feed_writer.nickname,
+                    'feed_user_id'      : feed_writer.id,
+                    'feed_writer_about' : feed_writer.about,
+                    'created_at'        : feed_data.created_at,
+                    'description'       : feed_data.description,
+                    'like_number'       : feed_data.like_number,
+                    'tag_item_number'   : feed_data.tag_item_number,
+                },
                 'product_data'      : product_data,
-                'feed_comment_data' : comment_data,
+                'feed_comment_data' : {
+                    'feed_comment_count' : feed_data.comment_set.count(),
+                    'comment_list'       : comment_list,
+                },
                 'feed_image_data'   : image_data,
             }, status=200)
-        
+
         except ValueError:
             return JsonResponse({'MESSAGE' : 'INVALID_VALUE TYPE'}, status=400)
 
@@ -80,6 +75,9 @@ class FeedDetailView(View):
 
         except Feed.DoesNotExist:
             return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=404)
+
+        except Product.DoesNotExist:
+            return JsonResponse({'MESSAGE' : 'INVALID_PRODUCT_ID'}, status=404)
 
     @login_decorator
     def patch(self, request, feed_id):

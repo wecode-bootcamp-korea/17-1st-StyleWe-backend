@@ -28,7 +28,7 @@ def login_decorator(func):
 
 def get_current_user_id(request):
     try:
-        if request.headers['AUTHORIZATION']:
+        if request.headers.get('AUTHORIZATION'):
             return User.objects.get(id=jwt.decode(request.headers['AUTHORIZATION'], SECRET_KEY, algorithms=ALGORITHM)['user_id']).id
         return 0
     
@@ -37,6 +37,3 @@ def get_current_user_id(request):
 
     except User.DoesNotExist:
         return JsonResponse({'message':'INVALID_USER'}, status=400)
-    
-    except KeyError:
-        return JsonResponse({'MESSAGE' : 'NEED_TO_SIGNIN'}, status=400)
