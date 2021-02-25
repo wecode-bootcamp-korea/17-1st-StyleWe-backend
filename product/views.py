@@ -32,6 +32,7 @@ class ProductView(View):
 
         product_review['feed_total_number'] = len(product.feed_set.all())
         product_review['feed_basic']        = [{
+                                                'feed_id': feed.id,
                                                 'main_image': feed.imageurl_set.all()[0].image_url,
                                                 'user_name': feed.user.user_name,
                                                 'description': feed.description,
@@ -60,6 +61,7 @@ class ProductView(View):
         product_category_hot['subcategory_name']    = product.subcategory.name
         product_category_hot['items']               = [
                                                             {
+                                                                'product_id':category_hot_product.id,
                                                                 'brand_name':category_hot_product.brand.name,
                                                                 'name': category_hot_product.name,
                                                                 'price': category_hot_product.price,
@@ -73,6 +75,7 @@ class ProductView(View):
         product_brand_hot['brand_name'] = product.brand.name
         product_brand_hot['items']      = [
                                                 {
+                                                    'product_id':brand_hot_product.id,
                                                     'brand_name':brand_hot_product.brand.name,
                                                     'name': brand_hot_product.name,
                                                     'price': brand_hot_product.price,
