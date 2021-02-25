@@ -47,7 +47,7 @@ class FeedView(View):
                     'feed_comment_data'  : {
                         'feed_comment_count' : feed.comment_set.count(),
                         'comment_list'       : [{
-                                'user'      : User.objects.get(id = comment.user_id).nickname,
+                                'user'      : comment.user.nickname,
                                 'content'   : comment.content
                             } for comment in feed.comment_set.all().order_by('-created_at')[:MAXIMUM_COMMENT]
                             ] if feed.comment_set.exists() else
@@ -70,7 +70,7 @@ class FeedDetailView(View):
     def get(self, request, feed_id):
         try:
             feed_data   = Feed.objects.get(id=feed_id)
-            feed_writer = User.objects.get(id=feed_data.user_id)
+            feed_writer = feed_data.user
             product_data = []
             if feed_data.product_id:
                 product      = Product.objects.get(id=feed_data.product_id)
@@ -145,9 +145,8 @@ class FeedDetailView(View):
                 if not new_description:
                     return JsonResponse({'MESSAGE' : 'NO_FEED_DESCRIPTION'}, status=400)
 
-                current_feed = Feed.objects.get(id=feed_id)
-                current_feed.description = new_description
-                current_feed.save()
+                target_feed.description = new_description
+                target_feed.save()
                 
                 return JsonResponse({'MESSAGE' : 'FEED_DESCRIPTION_UPDATED'}, status=200)
             
@@ -170,7 +169,7 @@ class FeedDetailView(View):
             if target_feed.user_id == get_current_user_id(request):
                 Feed.objects.get(id=feed_id).delete()
                 
-                return JsonResponse({'MESSAGE' : 'FEED_DELETED'}, status=200)
+                return JsonResponse({'MESSAGE' : 'FEED_DELETED'}, status=204)
             
             return JsonResponse({'MESSAGE' : 'USER_WITHOUT_AUTHORITY'}, status=403)
         
