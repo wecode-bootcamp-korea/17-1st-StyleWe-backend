@@ -1,6 +1,6 @@
 from django.urls import path, include
 
 urlpatterns = [
-    path('feed', include('feed.urls')),
-    path('user', include('user.urls')),
+        path('user', include('user.urls')),
+        path('product', include('product.urls'))
 ]
