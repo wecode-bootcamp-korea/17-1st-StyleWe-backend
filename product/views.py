@@ -1,4 +1,5 @@
 import json
+from operator import itemgetter
 
 from django.shortcuts   import render
 from django.http        import HttpResponse, JsonResponse
@@ -59,21 +60,21 @@ class ProductView(View):
                                                 ]
 
         product_category_hot['subcategory_name']    = product.subcategory.name
-        product_category_hot['items']               = [
-                                                            {
-                                                                'product_id':category_hot_product.id,
-                                                                'brand_name':category_hot_product.brand.name,
-                                                                'name': category_hot_product.name,
-                                                                'price': category_hot_product.price,
-                                                                'discount_rate': category_hot_product.discount_rate,
-                                                                'total_like_number': sum([category_hot_feed.like_number for category_hot_feed in category_hot_product.feed_set.all()]),
-                                                                'total_feed_number': len(category_hot_product.feed_set.all())
-                                                        }
-                                                        for category_hot_product in Product.objects.filter(subcategory=product.subcategory_id)
-                                                    ]
+        product_category_hot['items']               = sorted([
+                                                                {
+                                                                    'product_id':category_hot_product.id,
+                                                                    'brand_name':category_hot_product.brand.name,
+                                                                    'name': category_hot_product.name,
+                                                                    'price': category_hot_product.price,
+                                                                    'discount_rate': category_hot_product.discount_rate,
+                                                                    'total_like_number': sum([category_hot_feed.like_number for category_hot_feed in category_hot_product.feed_set.all()]),
+                                                                    'total_feed_number': len(category_hot_product.feed_set.all())
+                                                            }
+                                                            for category_hot_product in Product.objects.filter(subcategory=product.subcategory_id)
+                                                        ], key=itemgetter('total_like_number'), reverse=True)
 
         product_brand_hot['brand_name'] = product.brand.name
-        product_brand_hot['items']      = [
+        product_brand_hot['items']      = sorted([
                                                 {
                                                     'product_id':brand_hot_product.id,
                                                     'brand_name':brand_hot_product.brand.name,
@@ -84,7 +85,7 @@ class ProductView(View):
                                                     'total_feed_number': len(brand_hot_product.feed_set.all())
                                             }
                                             for brand_hot_product in Product.objects.filter(brand=product.brand_id)
-                                        ]
+                                        ], key=itemgetter('total_like_number'), reverse=True)
 
         result['product_basic']         = product_basic
         result['product_review']        = product_review
