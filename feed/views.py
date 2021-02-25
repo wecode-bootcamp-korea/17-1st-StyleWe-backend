@@ -4,18 +4,15 @@ from django.shortcuts   import render
 from django.views       import View
 from django.http        import JsonResponse
 
-from my_settings        import SECRET_KEY, ALGORITHM
 from user.models        import User
 from feed.models        import Feed, ImageUrl, Comment
 from product.models     import Product, ProductImageUrl
-#from user.utils         import login_decorator
+from user.utils         import login_decorator, get_current_user_id
 
 class FeedDetailView(View):
     def get(self, request, feed_id):
         try:
-            current_user_id = 0 # 미가입자
-            if request.headers.get('AUTHORIZATION'):
-                current_user_id = jwt.decode(request.headers['AUTHORIZATION'], SECRET_KEY, algorithms=ALGORITHM)['user_id']
+            current_user_id = get_current_user_id(request)
 
             feed_data       = Feed.objects.get(id=feed_id)
             feed_writer     = User.objects.get(id=feed_data.user_id)
@@ -31,7 +28,7 @@ class FeedDetailView(View):
             }
 
             product_id      = feed_data.product_id
-            product_data    = []
+            product_data    = False
             if product_id:
                 product         = Product.objects.get(id=product_id)
                 product_data    = [{
@@ -42,15 +39,18 @@ class FeedDetailView(View):
                     'product_image' : ProductImageUrl.objects.filter(product_id=product_id, is_main=1)[0].image_url
                 }]
 
-            comment_list = []
-            for item in list(feed_data.comment_set.all()):
-                comment = {
-                    'user'          : User.objects.get(id=item.user_id).nickname,
-                    'user_id'       : item.user_id,
-                    'content'       : item.content,
-                    'created_at'    : item.created_at,
-                }
-                comment_list.append(comment)
+            comments = feed_data.comment_set.all()
+            comment_list = False
+            if comments:
+                comment_list = []
+                for item in list(comments):
+                    comment = {
+                        'user'          : User.objects.get(id=item.user_id).nickname,
+                        'user_id'       : item.user_id,
+                        'content'       : item.content,
+                        'created_at'    : item.created_at,
+                    }
+                    comment_list.append(comment)
             
             comment_data = {
                 'feed_comment_count'    : len(feed_data.comment_set.all()),
@@ -77,29 +77,40 @@ class FeedDetailView(View):
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
 
+        except Feed.DoesNotExist:
+            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=400)
 
+    @login_decorator
+    def patch(self, request, feed_id):
+        try:
+            target_feed = Feed.objects.get(id=feed_id)
+            if target_feed.user_id == request.user.user_id:
+                new_description = json.loads(request.body)['description']
+                if not new_description:
+                    return JsonResponse({'MESSAGE' : 'NO_FEED_DESCRIPTION'}, status=400)
+                current_description = Feed.objects.get(id=feed_id).description
+                current_description = new_description
+                current_description.save()
+                return JsonResponse({'MESSAGE' : 'FEED_DESCRIPTION_UPDATED'}, status=200)
+            return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=400)
 
-    #def patch(self, request, feed_id):  # feed U
-        # 로그인 확인 + 해당 feed를 작성한 사용자인지 확인
-        # -> 로그인 데코레이터 사용하고 user_id = request.user로 user_id 뽑아내기
-        # 그 후 
+        except KeyError:
+            return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
 
+        except Feed.DoesNotExist:
+            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=400)
 
-    #@login_decorator
-    #def delete(self, request, feed_id):
-        #로그인 확인 + 해당 feed를 작성한 사용자인지 확인
-        #try:
-            #target_feed = Feed.objects.get(id=feed_id)
-            #if current_user_id == 
-            #Feed.objects.get(id=feed_id).delete()
+    @login_decorator
+    def delete(self, request, feed_id):
+        try:
+            target_feed = Feed.objects.get(id=feed_id)
+            if target_feed.user_id == get_current_user_id(request):
+                Feed.objects.get(id=feed_id).delete()
+                return JsonResponse({'MESSAGE' : 'FEED_DELETED'}, status=200)
+            return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=400)
         
+        except KeyError:
+            return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
 
-
-
-
-    #def post(self, request, feed_id):    # comment C
-        # 로그인 확인해서 user_id 뽑아내고 그걸 comment의 user로 넣기
-        # feed_id로 받은 걸 comment의 feed로 넣기.
-        # body로 받은 코멘트 내용을 comment의 content로 넣기
-        # created_at과 updated_at은 자동으로 들어감.
-
+        except Feed.DoesNotExist:
+            return JsonResponse({'MESSAGE' : 'INVALID_FEED_ID'}, status=400)

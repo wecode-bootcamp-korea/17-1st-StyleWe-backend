@@ -13,10 +13,29 @@ def login_decorator(func):
             user            = User.objects.get(id=payload['user_id'])
             request.user    = user
 
+            return func(self, request, *args, **kwargs)
+
         except jwt.exceptions.DecodeError:
             return JsonResponse({'message':'INVALID_TOKEN'}, status=400)
-        except user.DoesNotExist:
+        except User.DoesNotExist:
             return JsonResponse({'message':'INVALID_USER'}, status=400)
-        return func(self, request, *args, **kwargs)
+
+        except KeyError:
+            return JsonResponse({'MESSAGE' : 'NEED_TO_SIGNIN'}, status=400)
 
     return wrapper
+
+def get_current_user_id(request):
+    try:
+        if request.headers['AUTHORIZATION']:
+            return User.objects.get(id=jwt.decode(request.headers['AUTHORIZATION'], SECRET_KEY, algorithms=ALGORITHM)['user_id']).id
+        return 0
+    
+    except jwt.exceptions.DecodeError:
+        return JsonResponse({'message':'INVALID_TOKEN'}, status=400)
+
+    except User.DoesNotExist:
+        return JsonResponse({'message':'INVALID_USER'}, status=400)
+    
+    except KeyError:
+        return JsonResponse({'MESSAGE' : 'NEED_TO_SIGNIN'}, status=400)
