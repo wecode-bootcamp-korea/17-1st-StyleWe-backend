@@ -88,7 +88,7 @@ class FeedDetailView(View):
                 comment_list = False
             else:
                 comment_list = []
-                for item in list(feed_data.comment_set.all()):
+                for item in feed_data.comment_set.all():
                     comment = {
                         'user'          : User.objects.get(id=item.user_id).nickname,
                         'user_id'       : item.user_id,
@@ -97,11 +97,7 @@ class FeedDetailView(View):
                     }
                     comment_list.append(comment)
 
-            image_data = []
-            i = 0
-            for item in list(feed_data.imageurl_set.all()):
-                image_data.append({i : item.image_url})
-                i += 1
+            image_data = [{'url' : item.image_url} for item in feed_data.imageurl_set.all()]
 
             return JsonResponse({
                 'current_user_id'   : get_current_user_id(request),
