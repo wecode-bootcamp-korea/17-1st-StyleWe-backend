@@ -29,21 +29,16 @@ class FeedView(View):
 
             # 피드의 상품 정보
             if feed.product_id:
-                product_feed_id = feed.product
-                product_id      = feed.product.id 
-                product_name    = feed.product.name
-                discount_rate   = feed.product.discount_rate
-                price           = feed.product.price
-                product_image   = feed.product.productimageurl_set.get(is_main=1).image_url
-
                 product_data = {
-                    'product_name'   : product_name,
-                    'discount_rate'  : discount_rate,
-                    'price'          : price,
-                    'product_image'  : product_image
+                    'product_id'     : feed.product_id,
+                    'product_name'   : feed.product.name,
+                    'discount_rate'  : feed.product.discount_rate,
+                    'price'          : feed.product.price,
+                    'product_image'  : feed.product.productimageurl_set.get(is_main=1).image_url
                     }
             else:
                 product_data = {
+                    'product_id'     : '',
                     'product_name'   : '',
                     'discount_rate'  : '',
                     'price'          : '',
@@ -51,9 +46,8 @@ class FeedView(View):
                 }
             
             # 피드의 댓글
-            if feed.comment_set.exists():
-                feed_comment_count      = feed.comment_set.all().count()                   
-                feed_comment_new        = list(feed.comment_set.all().order_by('-created_at'))[:MAXIMUM_COMMENT]
+            if feed.comment_set.exists():               
+                feed_comment_new = list(feed.comment_set.all().order_by('-created_at'))[:MAXIMUM_COMMENT]
                 
                 comment_list = [
                     {
@@ -64,8 +58,8 @@ class FeedView(View):
                 ]
 
                 feed_comment_data = {
-                    'feed_comment_count'    : feed_comment_count,
-                    'comment_list'          : comment_list                    
+                    'feed_comment_count'  : feed.comment_set.count(),
+                    'comment_list'        : comment_list                    
                     }
             else:
                 feed_comment_data = {
