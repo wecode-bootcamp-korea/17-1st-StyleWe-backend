@@ -1,14 +1,14 @@
 import json, jwt
-from json.decoder import JSONDecodeError
+from json.decoder       import JSONDecodeError
 
 from django.shortcuts   import render
 from django.views       import View
 from django.http        import JsonResponse
 
+from user.utils         import login_decorator, get_current_user_id
 from user.models        import User
 from feed.models        import Feed, ImageUrl, Comment
 from product.models     import Product, ProductImageUrl
-from user.utils         import login_decorator, get_current_user_id
 
 class FeedView(View):    
     def get(self, request):
@@ -147,7 +147,7 @@ class FeedDetailView(View):
                 
                 return JsonResponse({'MESSAGE' : 'FEED_DESCRIPTION_UPDATED'}, status=200)
             
-            return JsonResponse({'MESSAGE' : 'USER_WITHOUT_AUTHORITY'}, status=400)
+            return JsonResponse({'MESSAGE' : 'USER_WITHOUT_AUTHORITY'}, status=403)
 
         except ValueError:
             return JsonResponse({'MESSAGE' : 'INVALID_VALUE_TYPE'}, status=400)
@@ -168,7 +168,7 @@ class FeedDetailView(View):
                 
                 return JsonResponse({'MESSAGE' : 'FEED_DELETED'}, status=200)
             
-            return JsonResponse({'MESSAGE' : 'USER_WITHOUT_AUTHORITY'}, status=400)
+            return JsonResponse({'MESSAGE' : 'USER_WITHOUT_AUTHORITY'}, status=403)
         
         except ValueError:
             return JsonResponse({'MESSAGE' : 'INVALID_VALUE_TYPE'}, status=400)
