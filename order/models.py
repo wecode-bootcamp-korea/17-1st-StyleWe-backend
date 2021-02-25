@@ -21,7 +21,7 @@ class Status(models.Model):
 
 class OrderedProduct(models.Model):
     user            = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True)
-    color_size      = models.ForeignKey('product.ColorSize', on_delete=models.PROTECT)
+    product_option  = models.ForeignKey('product.ProductOption', on_delete=models.PROTECT)
     status          = models.ForeignKey('Status', on_delete=models.PROTECT)
     order           = models.ForeignKey('Order', on_delete=models.SET_NULL, null=True)
     price           = models.DecimalField(max_digits=15, decimal_places=3)
