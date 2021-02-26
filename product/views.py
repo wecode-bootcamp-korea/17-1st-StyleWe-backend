@@ -83,6 +83,7 @@ class ProductView(View):
         }
 
         result = {
+            'product_id'            : product_id,
             'product_basic'         : product_basic,
             'product_review'        : product_review,
             'product_detail'        : product_detail,
