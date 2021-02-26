@@ -84,8 +84,6 @@ class FeedDetailView(View):
                 product_data = False
 
             if feed_data.comment_set.exists():
-                comment_list = False
-            else:
                 comment_list = []
                 for item in feed_data.comment_set.all():
                     comment = {
@@ -95,6 +93,8 @@ class FeedDetailView(View):
                         'created_at'    : item.created_at,
                     }
                     comment_list.append(comment)
+            else:
+                comment_list = False
 
             return JsonResponse({
                 'current_user_id'   : get_current_user_id(request),
