@@ -23,9 +23,9 @@
    - Front-End : 유승현(PM), 박정현, 박경토
    - Back-End : 강승연, 심규보, 남채린
 
-### 4. gitHub 링크 : https://github.com/ysh1394/17-1st-StyleWe-frontend
+### 4. [gitHub](https://github.com/ysh1394/17-1st-StyleWe-backend)
 
-### 5. 데모 영상(링크) : https://drive.google.com/file/d/1-yQxb6fVL7KY29i3dajLNLSoZQaLSqI9/view?usp=sharing
+### 5. [데모 영상](https://drive.google.com/file/d/1-yQxb6fVL7KY29i3dajLNLSoZQaLSqI9/view?usp=sharing)
 
 ## 적용 기술 및 구현 기능
 
@@ -91,7 +91,7 @@
 
 #### Back-End
 
-- API 문서 링크 : https://docs.google.com/document/d/1Ddpm9KqqfqIaggrZ6ucsB_qoL6Kpbb67JLjjFFAjkGM/edit?usp=sharing
+- [API 문서](https://docs.google.com/document/d/1Ddpm9KqqfqIaggrZ6ucsB_qoL6Kpbb67JLjjFFAjkGM/edit?usp=sharing)
 1. 회원가입 시 기입된 정보를 규칙에 맞게 거르고, 입력 받은 정보로 새 사용자를 생성하는 기능의 api 구현.
 2. 데이터베이스에 비밀번호를 저장할 때 보안을 위해 bcrypt로 암호화함.
 3. 로그인시 사용자 여부를 판단할 수 있는 access token을 발급하여 로그인 유지 기능을 구현할 수 있도록 함.
